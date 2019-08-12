@@ -4,12 +4,16 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.UI;
+using UnityEngine.Audio;
+
 [Serializable] public class DadosJogo{
     public int dinheiro;
     public int dadosPontuacao;
     public int tempoRelogio;
     public int skinAtual;
     public int skinsCompradas;
+    public bool somLigado;
 }
 public class GameController : MonoBehaviour
 {
@@ -25,7 +29,12 @@ public class GameController : MonoBehaviour
     GameObject[] estrelasArray;
     public List<Estrela> estrelasLista;
     private UiControle controleUi;
-    
+    [Header("Som")]
+    public Sprite[] iconesSom;
+    public Image iconeBotaoSom;
+    private bool somLigado;
+    public AudioSource somGeral;
+    public AudioMixer somGeralMixer;
 
     private void Awake() {
         
@@ -51,7 +60,11 @@ public class GameController : MonoBehaviour
             tempoRelogio = 3;
             skinAtual = 0;
             skinsCompradas = 0;
+            somLigado = true;
         }
+
+        somGeral = GetComponent<AudioSource>();
+
 
     }
 
@@ -63,6 +76,7 @@ public class GameController : MonoBehaviour
         {
             estrelasLista.Add(estrelasArray[i].GetComponent<Estrela>());
         }
+        ControleDeSom();
     }
 
     // Update is called once per frame
@@ -104,7 +118,7 @@ public class GameController : MonoBehaviour
         pontosMax = dadosJogo.dadosPontuacao;
         skinAtual = dadosJogo.skinAtual;
         skinsCompradas = dadosJogo.skinsCompradas;
-        
+        somLigado = dadosJogo.somLigado;
     }
     public void SalvarDados(){
 
@@ -117,6 +131,7 @@ public class GameController : MonoBehaviour
         dadosJogo.tempoRelogio = tempoRelogio;
         dadosJogo.skinAtual = skinAtual;
         dadosJogo.skinsCompradas = skinsCompradas;
+        dadosJogo.somLigado = somLigado;
         
         bf.Serialize(arquivoSave, dadosJogo);
         arquivoSave.Close();
@@ -154,5 +169,32 @@ public class GameController : MonoBehaviour
         {
             estrelasLista[i].Reiniciar();
         }
+    }
+    public void ControleDeSom(){
+
+        if (somLigado){
+            somGeralMixer.SetFloat("SomGeral", 0f);
+            iconeBotaoSom.sprite = iconesSom[1];
+        }else{
+            somGeralMixer.SetFloat("SomGeral", -80f);
+            iconeBotaoSom.sprite = iconesSom[0];
+        }        
+    }
+
+    public void MudarEstadoSom(){
+        if (somLigado)
+        {
+            somLigado = false;
+        }else
+        {
+            somLigado = true;
+        }
+
+        ControleDeSom();
+        SalvarDados();
+    }
+
+    public void OpenLink(string link){
+        Application.OpenURL(link);
     }
 }

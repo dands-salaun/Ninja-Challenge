@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
 
 public class Player : MonoBehaviour
 {
@@ -21,11 +22,17 @@ public class Player : MonoBehaviour
     private UiControle controleUi;
     private PowerUpController controlePu; 
     private Propagandas controlePropagandas;
+    [Header("Som")]
+    public AudioSource meuSom;
+    [Header("Botões Mogimento")]
+    public GameObject botaoEsquerda;
+    public GameObject botaoDireita;
 
 
     void Start()
     {
         meuCorpinho = GetComponent<Rigidbody2D>();
+        meuSom = GetComponent<AudioSource>();
         controleUi = GameObject.FindGameObjectWithTag("ControleUI").GetComponent<UiControle>();
         controlePu = GameObject.FindGameObjectWithTag("ControlePU").GetComponent<PowerUpController>();
         controlePropagandas = GameObject.FindGameObjectWithTag("Propaganda").GetComponent<Propagandas>();
@@ -121,6 +128,10 @@ public class Player : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D objetoColidido) {
         if (objetoColidido.gameObject.tag == "Estrela")
         {
+            botaoDireita.SetActive(false);
+            botaoEsquerda.SetActive(false);
+            GameController.CONTROLE_DE_JOGO.somGeral.Pause();
+            meuSom.Play();
             GameController.CONTROLE_DE_JOGO.jogoOn = false;
             minhaAnimacao.SetBool("Morto", true);
             GameController.CONTROLE_DE_JOGO.VerificarPontuacaoMax();
@@ -152,6 +163,8 @@ public class Player : MonoBehaviour
     public void Reiniciar(){
         minhaAnimacao.SetBool("Morto", false);
         transform.position = new Vector3(0 , transform.position.y, transform.position.z);
+        botaoDireita.SetActive(true);
+        botaoEsquerda.SetActive(true);
     }
     IEnumerator FadeOut()
     {

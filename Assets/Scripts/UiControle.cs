@@ -8,6 +8,7 @@ public class UiControle : MonoBehaviour
 {
     [Header("Menu")]
     public GameObject menu;
+    public CanvasGroup menuCanvas;
     public GameObject playBotao;
     public Text textoStart;
 
@@ -34,7 +35,12 @@ public class UiControle : MonoBehaviour
     public CanvasGroup canvasGameOver;
     public Player player;    
     private UiControle controleUi;
-    
+    [Header("Creitos")]
+    public CanvasGroup creditosCanvas;
+    public GameObject creditos;
+    [Header("Em Breve")]
+    public GameObject emBreve;
+    public CanvasGroup emBreveCanvas;
     void Start()
     {
         pontosTxt.text = GameController.CONTROLE_DE_JOGO.pontos.ToString();
@@ -104,6 +110,7 @@ public class UiControle : MonoBehaviour
     public void Reiniciar(){
         GameOverEsconder();
         GameController.CONTROLE_DE_JOGO.Iniciar();
+        GameController.CONTROLE_DE_JOGO.somGeral.Play();
         player.StartCoroutine("FadeOut");
         jogo.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
         StartCoroutine("DelayFadeIn");
@@ -136,6 +143,7 @@ public class UiControle : MonoBehaviour
         player.StartCoroutine("FadeIn");
         DesativarBarraSuperior();
         MenuDescer();
+        GameController.CONTROLE_DE_JOGO.somGeral.Play();
     }
 
     public void AtivarBarraSuperior(){
@@ -200,5 +208,69 @@ public class UiControle : MonoBehaviour
         GameController.CONTROLE_DE_JOGO.skinAtual = indexPersonagem;
         player.SelecionarPersonagem();
         lojaController.TrocarTexto();
+    }
+
+    public void CreditosMostrar(){
+        
+        creditos.SetActive(true);
+        jogo.DOFade(0f, 0.5f);
+        player.StartCoroutine("FadeOut");
+        menuCanvas.DOFade(0f, 0.5f);
+        StartCoroutine("DelayCreditosMostrar");
+    }
+
+    IEnumerator DelayCreditosMostrar(){
+
+        yield return new WaitForSeconds(0.5f);
+        creditosCanvas.DOFade(1f, 0.5f);
+        menu.SetActive(false);
+    }
+    public void CreditosEsconder(){
+
+        creditosCanvas.DOFade(0f, 0.5f);
+        StartCoroutine("DelayCreditosEsconder");
+    }
+
+    IEnumerator DelayCreditosEsconder(){
+
+        yield return new WaitForSeconds(0.5f);
+        menu.SetActive(true);
+        menuCanvas.DOFade(1f, 0.5f);
+        jogo.DOFade(1f, 0.5f);
+        player.StartCoroutine("FadeIn");
+        creditos.SetActive(false);
+        
+    }
+    public void EmBreveMostrar(){
+        
+        emBreve.SetActive(true);
+        jogo.DOFade(0f, 0.5f);
+        player.StartCoroutine("FadeOut");
+        menuCanvas.DOFade(0f, 0.5f);
+        StartCoroutine("DelayEmBreveMostrar");
+    }
+
+    IEnumerator DelayEmBreveMostrar(){
+
+        yield return new WaitForSeconds(0.5f);
+        emBreveCanvas.DOFade(1f, 0.5f);
+        menu.SetActive(false);
+    }
+
+    public void EmBreveEsconder(){
+
+        emBreveCanvas.DOFade(0f, 0.5f);
+        StartCoroutine("DelayEmBreveEsconder");
+    }
+
+    IEnumerator DelayEmBreveEsconder(){
+
+        yield return new WaitForSeconds(0.5f);
+        menu.SetActive(true);
+        menuCanvas.DOFade(1f, 0.5f);
+        jogo.DOFade(1f, 0.5f);
+        player.StartCoroutine("FadeIn");
+        emBreve.SetActive(false);
+        
     }
 }

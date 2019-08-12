@@ -21,6 +21,9 @@ public class LojaController : MonoBehaviour
     public GameObject cincoSecBt;
     public GameObject seteSecBt;
     public GameObject dezSecBt;
+    public Text cincoSecTxt;
+    public Text seteSecTxt;
+    public Text dezSeTxt;
 
     [Header("Controles")]
     private UiControle controleUi;
@@ -33,6 +36,10 @@ public class LojaController : MonoBehaviour
         VerificarPoderCompraUpgrade();
         narutoValorTexto.text = precoNaruto.ToString();
         TrocarTexto();
+
+        cincoSecTxt.text = precoCincoSeg.ToString();
+        seteSecTxt.text = precoSeteSeg.ToString();
+        dezSeTxt.text = precoDezSeg.ToString();
     }
 
     // Update is called once per frame
