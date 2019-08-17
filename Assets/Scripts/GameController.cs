@@ -10,6 +10,7 @@ using UnityEngine.Audio;
 [Serializable] public class DadosJogo{
     public int dinheiro;
     public int dadosPontuacao;
+    public int vidas;
     public int tempoRelogio;
     public int skinAtual;
     public int skinsCompradas;
@@ -22,6 +23,7 @@ public class GameController : MonoBehaviour
     public int moedas;
     public int pontos;
     public int pontosMax;
+    public int vidas;
     public int tempoRelogio;
     public int skinAtual;
     public int skinsCompradas;
@@ -35,6 +37,10 @@ public class GameController : MonoBehaviour
     private bool somLigado;
     public AudioSource somGeral;
     public AudioMixer somGeralMixer;
+
+    public bool continueADS = false;
+    public bool continueDinheiro = false;
+    public int valorContinue;
 
     private void Awake() {
         
@@ -57,6 +63,7 @@ public class GameController : MonoBehaviour
 
             moedas = 0;
             pontosMax = 0;
+            vidas = 1;
             tempoRelogio = 3;
             skinAtual = 0;
             skinsCompradas = 0;
@@ -86,11 +93,15 @@ public class GameController : MonoBehaviour
     }
 
     public void Iniciar(){
+        continueADS = false;
+        continueDinheiro = false;
         pontos = 0;
         controleUi.AtualizarMoedas();
         StartCoroutine("DelayIniciar");
     }
-    
+    public void Continue(){
+        StartCoroutine("DelayIniciar");
+    }
     IEnumerator DelayIniciar(){
         yield return new WaitForSeconds(1f);
         jogoOn = true;
@@ -196,5 +207,15 @@ public class GameController : MonoBehaviour
 
     public void OpenLink(string link){
         Application.OpenURL(link);
+    }
+
+    public void ComprarContinue(){
+        moedas -= valorContinue;
+        controleUi.AtualizarMoedas();
+        controleUi.AtualizarMoedasLoja();
+        continueDinheiro = true;
+        SalvarDados();
+        controleUi.Continue();
+        
     }
 }

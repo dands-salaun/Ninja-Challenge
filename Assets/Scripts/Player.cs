@@ -24,10 +24,10 @@ public class Player : MonoBehaviour
     private Propagandas controlePropagandas;
     [Header("Som")]
     public AudioSource meuSom;
-    [Header("Botões Mogimento")]
-    public GameObject botaoEsquerda;
-    public GameObject botaoDireita;
 
+    private int vidas;
+    public float tempoImortal;
+    public bool imortal = false;
 
     void Start()
     {
@@ -36,6 +36,8 @@ public class Player : MonoBehaviour
         controleUi = GameObject.FindGameObjectWithTag("ControleUI").GetComponent<UiControle>();
         controlePu = GameObject.FindGameObjectWithTag("ControlePU").GetComponent<PowerUpController>();
         controlePropagandas = GameObject.FindGameObjectWithTag("Propaganda").GetComponent<Propagandas>();
+        //vidas = GameController.CONTROLE_DE_JOGO.vidas;
+        vidas = 1;
         SelecionarPersonagem();
 
     }
@@ -88,13 +90,15 @@ public class Player : MonoBehaviour
 
         if (direita)
         {
-            playerSprite.flipX = false;
+            //playerSprite.flipX = false;
+            transform.localScale = new Vector3(1, 1, 1);
             transform.Translate (Vector2.right * velocidade * Time.deltaTime);
             esquerda = false;
             minhaAnimacao.SetBool("Correndo", true);
         }else if (esquerda)
         {
-            playerSprite.flipX = true;
+            //playerSprite.flipX = true;
+            transform.localScale = new Vector3(-1, 1, 1);
             transform.Translate (Vector2.left * velocidade * Time.deltaTime);
             direita = false;
             minhaAnimacao.SetBool("Correndo", true);
@@ -128,17 +132,31 @@ public class Player : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D objetoColidido) {
         if (objetoColidido.gameObject.tag == "Estrela")
         {
-            botaoDireita.SetActive(false);
-            botaoEsquerda.SetActive(false);
-            GameController.CONTROLE_DE_JOGO.somGeral.Pause();
-            meuSom.Play();
-            GameController.CONTROLE_DE_JOGO.jogoOn = false;
-            minhaAnimacao.SetBool("Morto", true);
-            GameController.CONTROLE_DE_JOGO.VerificarPontuacaoMax();
-            GameController.CONTROLE_DE_JOGO.SalvarDados();
-            // Desativar os objetos da cena
-            GameController.CONTROLE_DE_JOGO.DesabilitarObjetosCena();
-
+            if (!imortal)
+            {
+                vidas -= 1;
+                if (vidas < 1)
+                {
+                    GameController.CONTROLE_DE_JOGO.somGeral.Pause();
+                    meuSom.Play();
+                    GameController.CONTROLE_DE_JOGO.jogoOn = false;
+                    minhaAnimacao.SetBool("Morto", true);
+                    minhaAnimacao.SetBool("Correndo", false);
+                    GameController.CONTROLE_DE_JOGO.VerificarPontuacaoMax();
+                    GameController.CONTROLE_DE_JOGO.SalvarDados();
+                    GameController.CONTROLE_DE_JOGO.DesabilitarObjetosCena();    
+                }else
+                {
+                    objetoColidido.gameObject.SetActive(false);
+                    objetoColidido.gameObject.GetComponent<Estrela>().Voltar();
+                    StartCoroutine("Imortal");
+                    
+                }    
+            }else
+            {
+                objetoColidido.gameObject.SetActive(false);
+                objetoColidido.gameObject.GetComponent<Estrela>().Voltar();                    
+            } 
         }
         if (objetoColidido.gameObject.tag == "Parede")
         {
@@ -152,19 +170,14 @@ public class Player : MonoBehaviour
     }
     public void Morrer(){
         GameController.CONTROLE_DE_JOGO.jogoOn = false;
-        controlePropagandas.GanharDinheiro();
-        Debug.Log("Oi");
-        // Descer tela de menu game over
+        //controlePropagandas.GanharDinheiro();
         controleUi.GameOver();
-        // Parar jogo
         
     }
 
     public void Reiniciar(){
         minhaAnimacao.SetBool("Morto", false);
         transform.position = new Vector3(0 , transform.position.y, transform.position.z);
-        botaoDireita.SetActive(true);
-        botaoEsquerda.SetActive(true);
     }
     IEnumerator FadeOut()
     {
@@ -178,7 +191,6 @@ public class Player : MonoBehaviour
     }
     IEnumerator FadeIn()
     {
-        //SpriteRenderer renderer = GetComponent<SpriteRenderer>();
         Color newColor = playerSprite.color;      
         for (float f = 0f; f <= 1; f += 0.1f)
         {  
@@ -189,4 +201,19 @@ public class Player : MonoBehaviour
         newColor.a = 1f;
         playerSprite.color = newColor;
     }
+    
+    IEnumerator Imortal(){
+        imortal = true;
+        Physics2D.IgnoreLayerCollision(8, 10);
+        for (float i = 0; i < tempoImortal; i += 0.2f)
+        {
+            playerSprite.enabled = false;
+            yield return new WaitForSeconds(0.1f);    
+            playerSprite.enabled = true;
+            yield return new WaitForSeconds(0.1f);
+        }
+        Physics2D.IgnoreLayerCollision(8, 10, false);
+        imortal = false;
+    }
+    
 }

@@ -5,8 +5,8 @@ using UnityEngine.Monetization;
 
 public class PropagandaFree : MonoBehaviour {
 
-    public string placementId = "video";
-    string gameId = "3176553";
+    public string placementId = "rewardedVideo";
+    string gameId = "3249746";
     bool testMode = false;
 
     void Start () {

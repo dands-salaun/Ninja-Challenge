@@ -21,12 +21,5 @@ public class Morrer : MonoBehaviour
         GameController.CONTROLE_DE_JOGO.jogoOn = false;
         // Descer tela de menu game over
         controleUi.GameOver();
-        // Parar jogo
-        int random = Random.Range(0, 11);
-        if (random % 3 == 0)
-        {
-            controlePropagandas.ShowAd();    
-        }
-        
     }
 }

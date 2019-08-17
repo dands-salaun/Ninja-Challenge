@@ -110,7 +110,7 @@ public class Estrela : MonoBehaviour
         }
     }
 
-    void Voltar(){
+    public void Voltar(){
 
         transform.position = posInicial.position;
         gameObject.SetActive(true);
@@ -119,7 +119,7 @@ public class Estrela : MonoBehaviour
 
     void GerarMoeda(){
         
-        int sorteio = Random.Range(1 , 10);
+        int sorteio = Random.Range(1 , 11);
 
         if (sorteio % 4 == 0)
         {
@@ -127,7 +127,7 @@ public class Estrela : MonoBehaviour
             novaMoeda = Instantiate(moeda, transform.position, Quaternion.identity);
             Destroy(novaMoeda, 3f);
         }
-        if (sorteio % 5 == 0)
+        if (sorteio % 7 == 0)
         {
             if (!controlePU.relogio)
             {

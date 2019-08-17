@@ -34,6 +34,8 @@ public class UiControle : MonoBehaviour
     public Text pontosMaxGameOver;
     public CanvasGroup canvasGameOver;
     public Player player;    
+    public GameObject botaoContinueADS;
+    public GameObject botaoContinueDinheiro;
     private UiControle controleUi;
     [Header("Creitos")]
     public CanvasGroup creditosCanvas;
@@ -81,6 +83,25 @@ public class UiControle : MonoBehaviour
         textoStart.gameObject.SetActive(true);
     }
     public void GameOverDescer(){
+
+        if (GameController.CONTROLE_DE_JOGO.continueADS)
+        {
+            botaoContinueADS.SetActive(false);
+        }else
+        {
+            botaoContinueADS.SetActive(true);
+        }
+        if (GameController.CONTROLE_DE_JOGO.continueDinheiro)
+        {
+            botaoContinueDinheiro.SetActive(false);
+        }else
+        {
+            if (GameController.CONTROLE_DE_JOGO.moedas >= GameController.CONTROLE_DE_JOGO.valorContinue)
+            {
+                botaoContinueDinheiro.SetActive(true);    
+            }
+            
+        }
         canvasGameOver.DOFade(1f, 0.01f);
         painelGameOver.SetActive(false);
         gameOver.DOAnchorPos(new Vector2(0, 0f), 1f);
@@ -117,7 +138,16 @@ public class UiControle : MonoBehaviour
         GameController.CONTROLE_DE_JOGO.ReiniciarEstrelas();
         controleUi.AtualizarPontos();        
     }
-
+    public void Continue(){
+        GameOverEsconder();
+        GameController.CONTROLE_DE_JOGO.Continue();
+        GameController.CONTROLE_DE_JOGO.somGeral.Play();
+        player.StartCoroutine("FadeOut");
+        jogo.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
+        StartCoroutine("DelayFadeIn");
+        GameController.CONTROLE_DE_JOGO.ReiniciarEstrelas();
+        controleUi.AtualizarPontos();        
+    }
     public void VoltarMenu(){
 
         GameOverEsconder();
@@ -130,7 +160,7 @@ public class UiControle : MonoBehaviour
     }
     IEnumerator DelayFadeIn(){
         yield return new WaitForSeconds(0.5f);
-        player.GetComponent<Player>().Reiniciar();
+        player.Reiniciar();
         jogo.DOFade(1f, 0.5f);
         player.StartCoroutine("FadeIn");
         DesativarBarraSuperior();
@@ -138,7 +168,7 @@ public class UiControle : MonoBehaviour
 
     IEnumerator DelayFadeInMenu(){
         yield return new WaitForSeconds(0.5f);
-        player.GetComponent<Player>().Reiniciar();
+        player.Reiniciar();
         jogo.DOFade(1f, 0.5f);
         player.StartCoroutine("FadeIn");
         DesativarBarraSuperior();
