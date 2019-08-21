@@ -1,77 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Monetization;
-
+using UnityEngine;using UnityEngine.Monetization;
 
 public class Propagandas : MonoBehaviour {
 
-	string gameId = "3249746";
+    public string placementId_Completo = "rewardedVideo";
+    public string placementId_Skip = "video";
+    public string tipoRecompensa;
+    string gameId = "3262530";
     bool testMode = false;
-    public string placementId = "rewardedVideo";
     private UiControle controleUi;
     private LojaController controleLoja;
-    private string tipoRecompensa;
-
+    private void Awake() {
+        Monetization.Initialize(gameId, testMode);
+    }
     void Start() {
-
         controleUi = GameObject.FindGameObjectWithTag("ControleUI").GetComponent<UiControle>();
         controleLoja = GameObject.FindGameObjectWithTag("Loja").GetComponent<LojaController>();
     }
-
-    private void Awake(){
-        Monetization.Initialize(gameId, testMode);
-    }
-    //public string placementId = "rewardedVideo";
-    public void GanharDinheiro(string tipo){
-        
+    public void ShowAd_Completo (string tipo) {
         tipoRecompensa = tipo;
-        ShowAd();
-    }
-
-    public void ShowAd () {
         StartCoroutine (WaitForAd ());
     }
-
+    public void ShowAd_Skip () {
+        StartCoroutine (ShowAdWhenReady ());
+    }
     IEnumerator WaitForAd () {
-        while (!Monetization.IsReady (placementId)) {
+        while (!Monetization.IsReady (placementId_Completo)) {
             yield return null;
         }
 
         ShowAdPlacementContent ad = null;
-        ad = Monetization.GetPlacementContent (placementId) as ShowAdPlacementContent;
-
+        ad = Monetization.GetPlacementContent (placementId_Completo) as ShowAdPlacementContent;
 
         if (ad != null) {
             ad.Show (AdFinished);
         }
-
     }
 
     void AdFinished (ShowResult result) {
-
-        
-        
         if (result == ShowResult.Finished) {
-
             if (tipoRecompensa == "vida")
             {
-                // chamar player com continue
                 controleUi.Continue();
                 GameController.CONTROLE_DE_JOGO.continueADS = true;
+
             }else if(tipoRecompensa == "dinheiro")
             {
-                // Reward the player
-                // DAR PREMIO
-                //GameController.CONTROLE_DE_JOGO.moedas += 10;
-                //controleUi.AtualizarMoedas();
-                //controleUi.AtualizarMoedasLoja();
-                //controleLoja.VerificarPoderCompraUpgrade();
-                //controleLoja.VerificarPoderDeCompraNaruto();    
+                
             }
             
         }
     }
 
+    private IEnumerator ShowAdWhenReady () {
+        while (!Monetization.IsReady (placementId_Skip)) {
+            yield return new WaitForSeconds(0.25f);
+        }
     
+        ShowAdPlacementContent ad = null;
+        ad = Monetization.GetPlacementContent (placementId_Skip) as ShowAdPlacementContent;
+
+        if(ad != null) {
+            ad.Show ();
+        }
+    }
+
 }

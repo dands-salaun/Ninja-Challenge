@@ -15,6 +15,7 @@ using UnityEngine.Audio;
     public int skinAtual;
     public int skinsCompradas;
     public bool somLigado;
+    public bool propagandasAtivadas;
 }
 public class GameController : MonoBehaviour
 {
@@ -41,6 +42,8 @@ public class GameController : MonoBehaviour
     public bool continueADS = false;
     public bool continueDinheiro = false;
     public int valorContinue;
+    public int contagemMortes;
+    public bool propagandasAtivadas;
 
     private void Awake() {
         
@@ -68,6 +71,8 @@ public class GameController : MonoBehaviour
             skinAtual = 0;
             skinsCompradas = 0;
             somLigado = true;
+            propagandasAtivadas = true;
+            SalvarDados();
         }
 
         somGeral = GetComponent<AudioSource>();
@@ -84,6 +89,8 @@ public class GameController : MonoBehaviour
             estrelasLista.Add(estrelasArray[i].GetComponent<Estrela>());
         }
         ControleDeSom();
+        
+        contagemMortes = 0;
     }
 
     // Update is called once per frame
@@ -130,6 +137,9 @@ public class GameController : MonoBehaviour
         skinAtual = dadosJogo.skinAtual;
         skinsCompradas = dadosJogo.skinsCompradas;
         somLigado = dadosJogo.somLigado;
+        propagandasAtivadas = true; // Alterar depois
+
+
     }
     public void SalvarDados(){
 
@@ -143,6 +153,7 @@ public class GameController : MonoBehaviour
         dadosJogo.skinAtual = skinAtual;
         dadosJogo.skinsCompradas = skinsCompradas;
         dadosJogo.somLigado = somLigado;
+        dadosJogo.propagandasAtivadas = propagandasAtivadas;
         
         bf.Serialize(arquivoSave, dadosJogo);
         arquivoSave.Close();

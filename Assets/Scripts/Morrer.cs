@@ -5,11 +5,12 @@ using UnityEngine;
 public class Morrer : MonoBehaviour
 {
     private UiControle controleUi;
-    private PropagandaFree controlePropagandas;
+    private Propagandas propagandasControle;
+
     void Start()
     {
         controleUi = GameObject.FindGameObjectWithTag("ControleUI").GetComponent<UiControle>();
-        controlePropagandas = GameObject.FindGameObjectWithTag("Propaganda").GetComponent<PropagandaFree>();
+        propagandasControle = GameObject.FindGameObjectWithTag("Propaganda").GetComponent<Propagandas>();
     }
 
     // Update is called once per frame
@@ -19,7 +20,16 @@ public class Morrer : MonoBehaviour
     }
     public void Morte(){
         GameController.CONTROLE_DE_JOGO.jogoOn = false;
-        // Descer tela de menu game over
+        GameController.CONTROLE_DE_JOGO.contagemMortes ++;
+        PlayServices.PosScore((long) GameController.CONTROLE_DE_JOGO.pontos, NinjaChallengeServices.leaderboard_ranking);
+        if (GameController.CONTROLE_DE_JOGO.contagemMortes == 3){
+            if (GameController.CONTROLE_DE_JOGO.propagandasAtivadas)
+            {
+                GameController.CONTROLE_DE_JOGO.contagemMortes = 0;
+                propagandasControle.ShowAd_Skip();    
+            }
+        }
+        
         controleUi.GameOver();
     }
 }

@@ -18,7 +18,7 @@ public class Estrela : MonoBehaviour
     public GameObject relogioPU;
     public PowerUpController controlePU;
     public float gravidadeInicial = 0f;
-    public float gravidadeCaindo = 1f;
+    public float gravidadeCaindo = 1.5f;
 
     public UiControle controleUi;
     
@@ -77,7 +77,7 @@ public class Estrela : MonoBehaviour
 
     }
     void DesativarPowerUpRelogio(){
-        gravidadeCaindo = 1f;
+        gravidadeCaindo = 1.5f;
         if (caindo)
         {
             rbEspinho.gravityScale = gravidadeCaindo;

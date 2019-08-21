@@ -113,7 +113,7 @@ public class UiControle : MonoBehaviour
         
     }
     public void GameOverSubir(){
-        gameOver.DOAnchorPos(new Vector2(0, 510f), 0.01f);
+        gameOver.DOAnchorPos(new Vector2(0, 760f), 0.01f);
     }
 
     IEnumerator DelayGameOverSubir(){
@@ -302,5 +302,9 @@ public class UiControle : MonoBehaviour
         player.StartCoroutine("FadeIn");
         emBreve.SetActive(false);
         
+    }
+
+    public void MostrarRanking(){
+        PlayServices.ShowLeaderBoard(NinjaChallengeServices.leaderboard_ranking);
     }
 }

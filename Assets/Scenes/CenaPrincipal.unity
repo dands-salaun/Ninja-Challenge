@@ -1470,7 +1470,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1946989057}
-        m_MethodName: GanharDinheiro
+        m_MethodName: ShowAd_Completo
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2047,7 +2047,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1635932182}
-        m_MethodName: EmBreveMostrar
+        m_MethodName: MostrarRanking
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2704,7 +2704,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &512807584
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9268,6 +9268,8 @@ MonoBehaviour:
   continueADS: 0
   continueDinheiro: 0
   valorContinue: 25
+  contagemMortes: 0
+  propagandasAtivadas: 0
 --- !u!4 &1501627301
 Transform:
   m_ObjectHideFlags: 0
@@ -10287,6 +10289,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1635932181}
   - component: {fileID: 1635932182}
+  - component: {fileID: 1635932183}
   m_Layer: 0
   m_Name: UIControle
   m_TagString: ControleUI
@@ -10346,6 +10349,18 @@ MonoBehaviour:
   creditos: {fileID: 777681164}
   emBreve: {fileID: 1865882786}
   emBreveCanvas: {fileID: 1865882787}
+--- !u!114 &1635932183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635932180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 164d4a449aca5a54ab17a3d6db8b0a4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1637022647
 GameObject:
   m_ObjectHideFlags: 0
@@ -11660,7 +11675,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 510}
+  m_AnchoredPosition: {x: 0, y: 510.00003}
   m_SizeDelta: {x: 720, y: 500}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1867413019
@@ -12000,7 +12015,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1946989058}
   - component: {fileID: 1946989057}
-  - component: {fileID: 1946989059}
   m_Layer: 0
   m_Name: Propaganda
   m_TagString: Propaganda
@@ -12020,7 +12034,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e5d0b6ae4966c541855c3c12587e7c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placementId: 
+  placementId_Completo: rewardedVideo
+  placementId_Skip: rewardedVideo
+  tipoRecompensa: 
 --- !u!4 &1946989058
 Transform:
   m_ObjectHideFlags: 0
@@ -12035,19 +12051,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1946989059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1946989056}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd48d120db8c839409fc50a24b5b1319, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  placementId: video
 --- !u!1 &1948663759
 GameObject:
   m_ObjectHideFlags: 0
@@ -12665,6 +12668,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1283023826663989102, guid: 67379efaec658f342ba2975318095c29,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1283023826512967939, guid: 67379efaec658f342ba2975318095c29,
         type: 3}
