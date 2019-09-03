@@ -104,6 +104,7 @@ public class GameController : MonoBehaviour
         continueDinheiro = false;
         pontos = 0;
         controleUi.AtualizarMoedas();
+        controleUi.AtualizarPontos();
         StartCoroutine("DelayIniciar");
     }
     public void Continue(){
