@@ -4,17 +4,20 @@ using UnityEngine;
 
 public class Estrela : MonoBehaviour
 {
-    private Rigidbody2D rbEspinho;
+    public Rigidbody2D rbEspinho;
     public Transform posInicial;
     public Transform posArremesso;
-    public float roracao;
+    public Animator myAmimator;
+    //public float roracao;
     public float tempoMin;
     public float tempoMax;
     public float atritoMin;
     public float atritoMax;
-    private bool caindo = false;
+    public bool caindo = false;
     private bool posicionar = true;
     public GameObject moeda;
+    public GameObject shield;
+    public GameObject ima;
     public GameObject relogioPU;
     public PowerUpController controlePU;
     public float gravidadeInicial = 0f;
@@ -28,6 +31,7 @@ public class Estrela : MonoBehaviour
         controlePU = GameObject.FindGameObjectWithTag("ControlePU").GetComponent<PowerUpController>();
         controleUi = GameObject.FindGameObjectWithTag("ControleUI").GetComponent<UiControle>();
         rbEspinho = GetComponent<Rigidbody2D>();
+        myAmimator = GetComponent<Animator>();
         transform.position = posInicial.position;
 
     }
@@ -90,21 +94,31 @@ public class Estrela : MonoBehaviour
         float tempo = Random.Range(tempoMin, tempoMax);
         yield return new WaitForSeconds(tempo);
         caindo = true;
+        myAmimator.SetBool("Caindo", true);
         float atrito = Random.Range(atritoMin, atritoMax);
         rbEspinho.drag = atrito;
-        rbEspinho.AddTorque(roracao);
+        //rbEspinho.AddTorque(roracao);
         rbEspinho.gravityScale = gravidadeCaindo;
         
     }
-    private void OnCollisionEnter2D(Collision2D objetoColidido) {
-         
-        if (objetoColidido.gameObject.tag == "Chao")
+    
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.gameObject.tag == "Chao")
         {
             GameController.CONTROLE_DE_JOGO.Pontuar();
             controleUi.AtualizarPontos();
             gameObject.SetActive(false);
             caindo = false;
-            GerarMoeda();
+            myAmimator.SetBool("Caindo", false);
+            GerarItem();
+            rbEspinho.gravityScale = gravidadeInicial;
+            Voltar();
+        }   
+        if (other.gameObject.tag == "Shield")
+        {
+            
+            gameObject.SetActive(false);
+            caindo = false;
             rbEspinho.gravityScale = gravidadeInicial;
             Voltar();
         }
@@ -113,11 +127,12 @@ public class Estrela : MonoBehaviour
     public void Voltar(){
 
         transform.position = posInicial.position;
+        gameObject.GetComponent<Collider2D>().enabled = true;
         gameObject.SetActive(true);
         posicionar = true;
     }
 
-    void GerarMoeda(){
+    public void GerarMoeda(){
         
         int sorteio = Random.Range(1 , 11);
 
@@ -137,6 +152,50 @@ public class Estrela : MonoBehaviour
             }
         }
         
+    }
+
+    public void GerarItem(){
+        int sorteio = Random.Range(1, 11);
+        
+        if (sorteio % 4 == 0)
+        {
+            GameObject novaMoeda = Instantiate(moeda, transform.position, Quaternion.identity);
+            Destroy(novaMoeda, 3f);
+        }else
+        {
+            if (sorteio == 5)
+            {
+                if (GameController.CONTROLE_DE_JOGO.ima)
+                {
+                    if (!controlePU.ima)
+                    {
+                        GameObject novoIma = Instantiate(ima, transform.position, Quaternion.identity);
+                        Destroy(novoIma, 3f);   
+                    }
+                }
+            }else if (sorteio == 6)
+            {
+                if (GameController.CONTROLE_DE_JOGO.relogio)
+                {
+                    if (!controlePU.relogio)
+                    {
+                        GameObject novoRelogio = Instantiate(relogioPU, transform.position, Quaternion.identity);
+                        Destroy(novoRelogio, 3f);    
+                    }
+                    
+                }
+            }else if (sorteio == 7)
+            {
+                if (GameController.CONTROLE_DE_JOGO.shield)
+                {
+                    if (!controlePU.shield)
+                    {
+                        GameObject novoShild = Instantiate(shield, transform.position, Quaternion.identity);
+                        Destroy(novoShild, 3f);
+                    }
+                }
+            }
+        }
     }
 
     public void Reiniciar(){

@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 2403790821031064629}
   - component: {fileID: 3848754980182625728}
   - component: {fileID: 3757685213060989372}
+  - component: {fileID: 733609750933680336}
+  - component: {fileID: -2262732140719076581}
   m_Layer: 9
   m_Name: Moeda
   m_TagString: Coin
@@ -110,19 +112,19 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2403790821031064586}
-  m_BodyType: 2
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 5
+  m_Constraints: 4
 --- !u!58 &3757685213060989372
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -139,3 +141,29 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.15
+--- !u!114 &733609750933680336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2403790821031064586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8890ac5af5ec98f428b6cce5c0ddd1cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puController: {fileID: 0}
+--- !u!114 &-2262732140719076581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2403790821031064586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8890ac5af5ec98f428b6cce5c0ddd1cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puController: {fileID: 0}

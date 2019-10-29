@@ -15,8 +15,7 @@ public class Player : MonoBehaviour
     [Header("Imagem")]
     private SpriteRenderer playerSprite;
     private Animator minhaAnimacao;
-    public GameObject ninja;
-    public GameObject naruto;
+    public List<GameObject> listaSkins;
     
     [Header("Controles Externos")]
     private UiControle controleUi;
@@ -25,10 +24,9 @@ public class Player : MonoBehaviour
     [Header("Som")]
     public AudioSource meuSom;
 
-    private int vidas;
     public float tempoImortal;
-    public bool imortal = false;
-
+    public GameObject escudo;
+    
     void Start()
     {
         meuCorpinho = GetComponent<Rigidbody2D>();
@@ -36,8 +34,7 @@ public class Player : MonoBehaviour
         controleUi = GameObject.FindGameObjectWithTag("ControleUI").GetComponent<UiControle>();
         controlePu = GameObject.FindGameObjectWithTag("ControlePU").GetComponent<PowerUpController>();
         controlePropagandas = GameObject.FindGameObjectWithTag("Propaganda").GetComponent<Propagandas>();
-        //vidas = GameController.CONTROLE_DE_JOGO.vidas;
-        vidas = 1;
+        
         SelecionarPersonagem();
 
     }
@@ -54,28 +51,14 @@ public class Player : MonoBehaviour
     }
     
     public void SelecionarPersonagem(){
-        if (GameController.CONTROLE_DE_JOGO.skinAtual == 0)
-        {
-            PersonagemNinja();
-        }else if(GameController.CONTROLE_DE_JOGO.skinAtual == 1)
-        {
-            PersonagemNaruto();
-        }
-        GameController.CONTROLE_DE_JOGO.SalvarDados();
-    }
-    public void PersonagemNinja(){
         
-        ninja.SetActive(true);
-        naruto.SetActive(false);
-        playerSprite = ninja.GetComponent<SpriteRenderer>();
-        minhaAnimacao = ninja.GetComponent<Animator>();
-
-    }
-    public void PersonagemNaruto(){
-        naruto.SetActive(true);
-        ninja.SetActive(false);
-        playerSprite = naruto.GetComponent<SpriteRenderer>();
-        minhaAnimacao = naruto.GetComponent<Animator>();
+        for (int i = 0; i < listaSkins.Count; i++)
+        {
+            listaSkins[i].SetActive(false);
+        }
+        listaSkins[GameController.CONTROLE_DE_JOGO.skinAtual].SetActive(true);
+        playerSprite = listaSkins[GameController.CONTROLE_DE_JOGO.skinAtual].GetComponent<SpriteRenderer>();
+        minhaAnimacao = listaSkins[GameController.CONTROLE_DE_JOGO.skinAtual].GetComponent<Animator>();
     }
 
     void MovimentoAutonomo(){
@@ -127,45 +110,53 @@ public class Player : MonoBehaviour
             controleUi.AtualizarMoedas();
             Destroy(objetoColidido.gameObject);
 
+        }        
+        if (objetoColidido.gameObject.tag == "Relogio")
+        {
+            controlePu.AtivarRelogio();
+            Destroy(objetoColidido.gameObject);
         }
-    }
-    private void OnCollisionEnter2D(Collision2D objetoColidido) {
+        if (objetoColidido.gameObject.tag == "Escudo")
+        {
+            controlePu.AtivarShield();
+            Destroy(objetoColidido.gameObject);
+        }
+        if (objetoColidido.gameObject.tag == "Ima")
+        {
+            controlePu.AtivarIma();
+            Destroy(objetoColidido.gameObject);
+        }
+
         if (objetoColidido.gameObject.tag == "Estrela")
         {
-            if (!imortal)
+            if (!controlePu.shield)
             {
-                vidas -= 1;
-                if (vidas < 1)
-                {
+                
                     GameController.CONTROLE_DE_JOGO.somGeral.Pause();
                     meuSom.Play();
                     GameController.CONTROLE_DE_JOGO.jogoOn = false;
                     minhaAnimacao.SetBool("Morto", true);
                     minhaAnimacao.SetBool("Correndo", false);
+                    
+                    controlePu.DesabilitarTodosPowerUps();
+
                     GameController.CONTROLE_DE_JOGO.VerificarPontuacaoMax();
                     GameController.CONTROLE_DE_JOGO.SalvarDados();
-                    GameController.CONTROLE_DE_JOGO.DesabilitarObjetosCena();    
-                }else
-                {
-                    objetoColidido.gameObject.SetActive(false);
-                    objetoColidido.gameObject.GetComponent<Estrela>().Voltar();
-                    StartCoroutine("Imortal");
+                    GameController.CONTROLE_DE_JOGO.DesabilitarObjetosCena();
+
                     
-                }    
             }else
             {
                 objetoColidido.gameObject.SetActive(false);
                 objetoColidido.gameObject.GetComponent<Estrela>().Voltar();                    
             } 
         }
+    }
+    private void OnCollisionEnter2D(Collision2D objetoColidido) {
+        
         if (objetoColidido.gameObject.tag == "Parede")
         {
             MudarDirecao();
-        }
-        if (objetoColidido.gameObject.tag == "Relogio")
-        {
-            controlePu.AtivarRelogio();
-            Destroy(objetoColidido.gameObject);
         }
     }
     public void Morrer(){
@@ -202,18 +193,5 @@ public class Player : MonoBehaviour
         playerSprite.color = newColor;
     }
     
-    IEnumerator Imortal(){
-        imortal = true;
-        Physics2D.IgnoreLayerCollision(8, 10);
-        for (float i = 0; i < tempoImortal; i += 0.2f)
-        {
-            playerSprite.enabled = false;
-            yield return new WaitForSeconds(0.1f);    
-            playerSprite.enabled = true;
-            yield return new WaitForSeconds(0.1f);
-        }
-        Physics2D.IgnoreLayerCollision(8, 10, false);
-        imortal = false;
-    }
     
 }

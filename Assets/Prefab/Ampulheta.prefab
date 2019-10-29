@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4597543223595164158}
   - component: {fileID: 2084576945808952458}
   - component: {fileID: 6376200822309069117}
+  - component: {fileID: -4849789773022730821}
   m_Layer: 0
   m_Name: Ampulheta
   m_TagString: Relogio
@@ -96,7 +97,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -112,7 +113,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -128,3 +129,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.32, y: 0.51}
   m_EdgeRadius: 0
+--- !u!114 &-4849789773022730821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 479861034512296188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8890ac5af5ec98f428b6cce5c0ddd1cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puController: {fileID: 0}

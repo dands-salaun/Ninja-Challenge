@@ -6,6 +6,16 @@ using DG.Tweening;
 
 public class UiControle : MonoBehaviour
 {
+    [Header("Compra de Moedas")]
+    public GameObject panelCoins;
+    public Text moedas200Dinheiro;
+    public Text moedas500Dinheiro;
+    public Text moedas800Dinheiro;
+    public Text moedas1200Dinheiro;
+    public Text moedasCoinText;
+
+
+
     [Header("Menu")]
     public GameObject menu;
     public CanvasGroup menuCanvas;
@@ -14,9 +24,13 @@ public class UiControle : MonoBehaviour
 
     [Header("Loja")]
     public CanvasGroup loja;
+    public GameObject botoes;
     public GameObject skins;
-    public GameObject upgrade;
+    public GameObject itens;
+    public GameObject coins;
     public Text moedasLoja;
+    public Text moedasSkin;
+    public Text moedasItens;
     private LojaController lojaController;
 
     [Header("Jogo")]
@@ -27,6 +41,7 @@ public class UiControle : MonoBehaviour
     public GameObject barraMoedas;
     public RectTransform chao;
 
+
     [Header("Game Over")]
     public RectTransform gameOver;
     public GameObject painelGameOver;
@@ -36,6 +51,7 @@ public class UiControle : MonoBehaviour
     public Player player;    
     public GameObject botaoContinueADS;
     public GameObject botaoContinueDinheiro;
+    public Text valorContinue;
     private UiControle controleUi;
     [Header("Creitos")]
     public CanvasGroup creditosCanvas;
@@ -64,6 +80,10 @@ public class UiControle : MonoBehaviour
 
     public void AtualizarMoedas(){
         moedasTxt.text = GameController.CONTROLE_DE_JOGO.moedas.ToString();
+        moedasLoja.text = GameController.CONTROLE_DE_JOGO.moedas.ToString();
+        moedasSkin.text = GameController.CONTROLE_DE_JOGO.moedas.ToString();
+        moedasItens.text = GameController.CONTROLE_DE_JOGO.moedas.ToString();
+        moedasCoinText.text = GameController.CONTROLE_DE_JOGO.moedas.ToString();
     }
     public void AtualizarPontos(){
         pontosTxt.text = GameController.CONTROLE_DE_JOGO.pontos.ToString();
@@ -98,6 +118,7 @@ public class UiControle : MonoBehaviour
         {
             if (GameController.CONTROLE_DE_JOGO.moedas >= GameController.CONTROLE_DE_JOGO.valorContinue)
             {
+                valorContinue.text = GameController.CONTROLE_DE_JOGO.valorContinue.ToString();
                 botaoContinueDinheiro.SetActive(true);    
             }
             
@@ -188,7 +209,7 @@ public class UiControle : MonoBehaviour
         chao.DOAnchorPos(new Vector2(0, 0), 1f);
     }
 
-    public void LojaMostrar(){
+    public void LojaMostrar(){ // esconder player
         jogo.DOFade(0f, 0.5f);
         menu.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
         player.StartCoroutine("FadeOut");
@@ -199,11 +220,12 @@ public class UiControle : MonoBehaviour
     IEnumerator DelayMostrarLoja(){
 
         yield return new WaitForSeconds(0.5f);
+        player.gameObject.SetActive(false);
         AtualizarMoedasLoja();
         menu.SetActive(false);
+        // Desativar botão play
+        playBotao.SetActive(false);
         loja.DOFade(1f, 0.5f);
-        lojaController.VerificarPoderDeCompraNaruto();
-        lojaController.VerificarPoderCompraUpgrade();
     }
     public void LojaEsconder(){
         loja.DOFade(0f, 0.5f);
@@ -215,30 +237,14 @@ public class UiControle : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         jogo.DOFade(1f, 0.5f);
          menu.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
-         player.StartCoroutine("FadeIn");
+        player.gameObject.SetActive(true);
+        player.StartCoroutine("FadeIn");
         loja.gameObject.SetActive(false);
+        AtualizarMoedas();
+        playBotao.SetActive(true);
+        AtualizarMoedas();
     }
-    public void MostrarUpgrade(){
-
-        skins.GetComponent<RectTransform>().DOAnchorPos(new Vector2(-730, 0), 0.5f);
-        skins.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
-        upgrade.GetComponent<RectTransform>().DOAnchorPos(new Vector2(0, 0), 0.5f);
-        upgrade.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
-        lojaController.VerificarPoderCompraUpgrade();
-    }
-    public void MostrarSkins(){
-
-        skins.GetComponent<RectTransform>().DOAnchorPos(new Vector2(0, 0), 0.5f);
-        skins.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
-        upgrade.GetComponent<RectTransform>().DOAnchorPos(new Vector2(730, 0), 0.5f);
-        upgrade.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
-        lojaController.VerificarPoderDeCompraNaruto();
-    }
-    public void TrocarPersonagem(int indexPersonagem){
-        GameController.CONTROLE_DE_JOGO.skinAtual = indexPersonagem;
-        player.SelecionarPersonagem();
-        lojaController.TrocarTexto();
-    }
+    
 
     public void CreditosMostrar(){
         
@@ -306,5 +312,105 @@ public class UiControle : MonoBehaviour
 
     public void MostrarRanking(){
         PlayServices.ShowLeaderBoard(NinjaChallengeServices.leaderboard_ranking);
+    }
+
+    public void LojaSkinsMostrar(){
+        // Desativar botões
+        botoes.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
+
+        // Ativar Skins
+        StartCoroutine("DelayMostrarSkins");
+
+    }
+    IEnumerator DelayMostrarSkins(){
+
+        yield return new WaitForSeconds(0.5f);
+        botoes.SetActive(false);
+        skins.SetActive(true);
+        skins.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+        AtualizarMoedas();
+    }
+
+    public void LojaSkinEsconder(){
+
+        skins.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
+        StartCoroutine("DelayEsconderSkins");
+
+    }
+
+    IEnumerator DelayEsconderSkins(){
+
+        yield return new WaitForSeconds(0.5f);
+        botoes.SetActive(true);
+        skins.SetActive(false);
+        skins.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+
+        botoes.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+    }
+
+    public void LojaItensMostrar(){
+        // Desativar botões
+        botoes.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
+        
+        StartCoroutine("DelayMostrarItens");
+
+    }
+    IEnumerator DelayMostrarItens(){
+
+        yield return new WaitForSeconds(0.5f);
+        botoes.SetActive(false);
+        itens.SetActive(true);
+        itens.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+        AtualizarMoedas();
+    }
+
+    public void LojaItensEsconder(){
+
+        itens.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
+        StartCoroutine("DelayEsconderItens");
+
+    }
+
+    IEnumerator DelayEsconderItens(){
+
+        yield return new WaitForSeconds(0.5f);
+        botoes.SetActive(true);
+        itens.SetActive(false);
+        //itens.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+
+        botoes.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+    }
+
+    public void LojaMoedasMostrar()
+    {
+        botoes.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
+
+        StartCoroutine("LojaMoedasMostrarDelay");
+    }
+
+    IEnumerator LojaMoedasMostrarDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        botoes.SetActive(false);
+        panelCoins.SetActive(true);
+        panelCoins.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+        AtualizarMoedas();
+    }
+
+    public void LojaMoedasEsconder()
+    {
+        panelCoins.GetComponent<CanvasGroup>().DOFade(0f, 0.5f);
+        StartCoroutine("LojaMoedasEsconderDelay");
+    }
+
+    IEnumerator LojaMoedasEsconderDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        botoes.SetActive(true);
+        panelCoins.SetActive(false);
+        //itens.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+
+        botoes.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+
     }
 }

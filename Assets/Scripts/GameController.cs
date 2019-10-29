@@ -11,11 +11,12 @@ using UnityEngine.Audio;
     public int dinheiro;
     public int dadosPontuacao;
     public int vidas;
-    public int tempoRelogio;
     public int skinAtual;
-    public int skinsCompradas;
     public bool somLigado;
     public bool propagandasAtivadas;
+    public bool ima;
+    public bool relogio;
+    public bool shield;
 }
 public class GameController : MonoBehaviour
 {
@@ -25,10 +26,11 @@ public class GameController : MonoBehaviour
     public int pontos;
     public int pontosMax;
     public int vidas;
-    public int tempoRelogio;
     public int skinAtual;
-    public int skinsCompradas;
     public bool jogoOn = false;
+    public bool ima;
+    public bool relogio;
+    public bool shield;
     GameObject[] estrelasArray;
     public List<Estrela> estrelasLista;
     private UiControle controleUi;
@@ -47,7 +49,7 @@ public class GameController : MonoBehaviour
 
     private void Awake() {
         
-        caminhoArquivoDadosJogo = Application.persistentDataPath + "/jogoInfo.dat";
+        caminhoArquivoDadosJogo = Application.persistentDataPath + "/dataGame.dat";
 
         if (CONTROLE_DE_JOGO == null)
         {
@@ -67,11 +69,12 @@ public class GameController : MonoBehaviour
             moedas = 0;
             pontosMax = 0;
             vidas = 1;
-            tempoRelogio = 3;
             skinAtual = 0;
-            skinsCompradas = 0;
             somLigado = true;
-            propagandasAtivadas = true;
+            propagandasAtivadas = true; // mudar quando implementar compra
+            ima = false;
+            relogio = false;
+            shield = false;
             SalvarDados();
         }
 
@@ -133,12 +136,16 @@ public class GameController : MonoBehaviour
         arquivoSave.Close();
 
         moedas = dadosJogo.dinheiro;
-        tempoRelogio = dadosJogo.tempoRelogio;
         pontosMax = dadosJogo.dadosPontuacao;
         skinAtual = dadosJogo.skinAtual;
-        skinsCompradas = dadosJogo.skinsCompradas;
+        //skinsCompradas = dadosJogo.skinsCompradas;
         somLigado = dadosJogo.somLigado;
         propagandasAtivadas = true; // Alterar depois
+        ima = dadosJogo.ima;
+        relogio = dadosJogo.relogio;
+        shield = dadosJogo.shield;
+
+        moedas = 1000;
 
 
     }
@@ -150,11 +157,13 @@ public class GameController : MonoBehaviour
 
         dadosJogo.dinheiro = moedas;
         dadosJogo.dadosPontuacao = pontosMax;
-        dadosJogo.tempoRelogio = tempoRelogio;
         dadosJogo.skinAtual = skinAtual;
-        dadosJogo.skinsCompradas = skinsCompradas;
+        //dadosJogo.skinsCompradas = skinsCompradas;
         dadosJogo.somLigado = somLigado;
         dadosJogo.propagandasAtivadas = propagandasAtivadas;
+        dadosJogo.ima = ima;
+        dadosJogo.relogio = relogio;
+        dadosJogo.shield = shield;
         
         bf.Serialize(arquivoSave, dadosJogo);
         arquivoSave.Close();
@@ -181,6 +190,17 @@ public class GameController : MonoBehaviour
         }
         GameObject[] relogios = GameObject.FindGameObjectsWithTag("Relogio");
         foreach (GameObject item in relogios) 
+        {
+            Destroy(item);
+        }
+
+        GameObject[] imas = GameObject.FindGameObjectsWithTag("Ima");
+        foreach (GameObject item in imas) 
+        {
+            Destroy(item);
+        }
+        GameObject[] escudos = GameObject.FindGameObjectsWithTag("Escudo");
+        foreach (GameObject item in escudos) 
         {
             Destroy(item);
         }

@@ -13,6 +13,10 @@ TagManager:
   - ControleUI
   - Loja
   - Propaganda
+  - SkinsManager
+  - Shield
+  - Escudo
+  - Ima
   layers:
   - Default
   - TransparentFX
@@ -25,8 +29,8 @@ TagManager:
   - Estrelas
   - Coin
   - Player
-  - 
-  - 
+  - Shield
+  - Chao
   - 
   - 
   - 

@@ -5,146 +5,231 @@ using UnityEngine.UI;
 
 public class LojaController : MonoBehaviour
 {
-    [Header("Valores")]
-    public int precoNaruto;
-    public int precoCincoSeg;
-    public int precoSeteSeg;
-    public int precoDezSeg;
-    [Header("Skins")]
-    public GameObject narutoBotaoComprar;
-    public GameObject imagemNarutoValor;
-    public GameObject imagemNarutoComprado;
-    public Text ninjaTexto;
-    public Text narutoTexto;
-    public Text narutoValorTexto;
-    [Header("Upgrade")]
-    public GameObject cincoSecBt;
-    public GameObject seteSecBt;
-    public GameObject dezSecBt;
-    public Text cincoSecTxt;
-    public Text seteSecTxt;
-    public Text dezSeTxt;
-
-    [Header("Controles")]
     private UiControle controleUi;
+    public Text dinheiroTexto;
+    //public int dinheiro;
+    public Text valorSkinTxt;
+    public GameObject campoValor;
+    public List<Skin> listaSkins;
+    public SkinsManager skinsManager;
+    public GameObject botaoComprar;
+    public GameObject botaoSelecionar;
+    public Image imagemItem;
+    private int indice;
+    private int skinSelecionada;
+    public GameObject selecionada;
+    private Player player;
+    [Header("Itens")]
+    public Text mensagem;
 
-    
+    [Header("Ima")]
+    public int valorIma;
+    public Text valorImaTxt;
+    [Header("Relogio")]
+    public int valorRelogio;
+    public Text valorRelogioTxt;
+    [Header("Escudo")]
+    public int valorEscudo;
+    public Text valorEscudoTxt;
+
+    [Header("Moedas")]
+    public int moedas200;
+    public int moedas500;
+    public int moedas800;
+    public int moedas1200;
+
     void Start()
     {
+        skinsManager = GameObject.FindGameObjectWithTag("SkinsManager").GetComponent<SkinsManager>(); 
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         controleUi = GameObject.FindGameObjectWithTag("ControleUI").GetComponent<UiControle>();
-        VerificarPoderDeCompraNaruto();
-        VerificarPoderCompraUpgrade();
-        narutoValorTexto.text = precoNaruto.ToString();
-        TrocarTexto();
+        listaSkins = skinsManager.listaSkinsArquivo;
+        indice = 0;
 
-        cincoSecTxt.text = precoCincoSeg.ToString();
-        seteSecTxt.text = precoSeteSeg.ToString();
-        dezSeTxt.text = precoDezSeg.ToString();
+        AtualizarImagem();
+		VerificarPoderDeCompra();
+
+        valorEscudoTxt.text = valorEscudo.ToString();
+        valorImaTxt.text = valorIma.ToString();
+        valorRelogioTxt.text = valorRelogio.ToString();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public void PassarItem(){
 
-    public void VerificarPoderDeCompraNaruto(){
-        
-        if (GameController.CONTROLE_DE_JOGO.skinsCompradas < 1)
+		int aux = indice + 1;
+		if (aux >= listaSkins.Count)
+		{
+			indice = 0;
+		}else{
+			indice = aux;
+		}
+
+		AtualizarImagem();
+	}
+	
+	public void VoltarItem(){
+
+		int aux = indice - 1;
+		if (aux < 0)
+		{
+			indice = listaSkins.Count - 1;
+		}else{
+			indice = aux;
+		}
+
+		AtualizarImagem();
+	}
+	void AtualizarImagem(){
+
+		imagemItem.sprite = listaSkins[indice].imagemSkin;
+        valorSkinTxt.text = listaSkins[indice].informacao.valorSkin.ToString();
+
+        if (indice == GameController.CONTROLE_DE_JOGO.skinAtual)
         {
-            if(GameController.CONTROLE_DE_JOGO.moedas >= precoNaruto){
-                narutoBotaoComprar.SetActive(true);
+            selecionada.SetActive(true);
+        }else
+        {
+            selecionada.SetActive(false);
+        }
+		VerificarPoderDeCompra();
+	}
+    
+    public void VerificarPoderDeCompra(){
+
+        if (!listaSkins[indice].informacao.adquirida) // Se não tiver sido adquirida
+        {
+            campoValor.SetActive(true);
+
+            if (GameController.CONTROLE_DE_JOGO.moedas < listaSkins[indice].informacao.valorSkin)
+		    {
+			    botaoComprar.SetActive(false);
+                botaoSelecionar.SetActive(false);
+            }else{
+    
+                botaoComprar.SetActive(true);
+                botaoSelecionar.SetActive(false);
             }    
-        }else
-        {
-            imagemNarutoComprado.SetActive(true);
-            imagemNarutoValor.SetActive(false);
-            narutoTexto.text = "Choice";
+        }else // Adiquirida
+        {   
+            // Desativar campo valor
+            campoValor.SetActive(false);
+
+            if (GameController.CONTROLE_DE_JOGO.skinAtual == indice)
+            {
+                botaoComprar.SetActive(false);
+                botaoSelecionar.SetActive(false);    
+            }else
+            {
+                botaoComprar.SetActive(false);
+                botaoSelecionar.SetActive(true);
+            }
+            
+                
         }
-    }
-    public void NarutoComprar(){
-        GameController.CONTROLE_DE_JOGO.moedas -= precoNaruto;
-        controleUi.AtualizarMoedasLoja();
-        GameController.CONTROLE_DE_JOGO.skinsCompradas = 1;
+	}
+
+    public void Comprar(){
+		int valor = listaSkins[indice].informacao.valorSkin;
+		GameController.CONTROLE_DE_JOGO.moedas -= valor;
         GameController.CONTROLE_DE_JOGO.SalvarDados();
-        narutoBotaoComprar.SetActive(false);
-        imagemNarutoComprado.SetActive(true);
-        imagemNarutoValor.SetActive(false);
-        narutoTexto.text = "Choice";
-        
+        listaSkins[indice].informacao.adquirida = true;
+        skinsManager.listaSkins = listaSkins;
+        skinsManager.SalvarDados();
+		VerificarPoderDeCompra();
+        //AtualisarDinheiro();
+        controleUi.AtualizarMoedas();
+
     }
 
-    public void TrocarTexto(){
-        if (GameController.CONTROLE_DE_JOGO.skinAtual == 0)
+    public void SelecionarSkin(){
+
+        skinSelecionada = indice;
+        GameController.CONTROLE_DE_JOGO.skinAtual = skinSelecionada;
+        GameController.CONTROLE_DE_JOGO.SalvarDados();
+        player.SelecionarPersonagem();
+        AtualizarImagem();
+
+    }
+    public void AtualisarDinheiro(){
+        //dinheiroTexto.text = GameController.CONTROLE_DE_JOGO.moedas.ToString();
+        controleUi.AtualizarMoedas();   
+    }
+
+    public void MensagemDinheiro(){
+        mensagem.text = "Insufficient money";
+        StartCoroutine("MostrarMensagem");
+    }
+    public void MensagemItemComprado(){
+
+        mensagem.text = "Purchased item";
+        StartCoroutine("MostrarMensagem");
+    }
+
+    public void MensagemItemExistente(){
+        mensagem.text = "you already have this item";
+        StartCoroutine("MostrarMensagem");
+    }
+
+    IEnumerator MostrarMensagem(){
+        mensagem.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        mensagem.gameObject.SetActive(false);
+    }
+
+    public void ComprarIma(){
+        if (!GameController.CONTROLE_DE_JOGO.ima)
         {
-            ninjaTexto.text = "Current";
-            narutoTexto.text = "Choice";
-        }else if(GameController.CONTROLE_DE_JOGO.skinAtual == 1)
-        {
-            ninjaTexto.text = "Choice";
-            narutoTexto.text = "Current";
+            if (GameController.CONTROLE_DE_JOGO.moedas >= valorIma)
+            {
+                GameController.CONTROLE_DE_JOGO.ima = true;
+                GameController.CONTROLE_DE_JOGO.moedas -= valorIma;
+                GameController.CONTROLE_DE_JOGO.SalvarDados();
+                //AtualisarDinheiro();
+                controleUi.AtualizarMoedas();
+                MensagemItemComprado();
+            }else{
+                MensagemDinheiro();
+            }
+        }else{
+            MensagemItemExistente();
         }
     }
 
-    public void VerificarPoderCompraUpgrade(){
-        if(GameController.CONTROLE_DE_JOGO.tempoRelogio < 5){
-            cincoSecBt.SetActive(true);
-            seteSecBt.SetActive(false);
-            dezSecBt.SetActive(false);
-            if (GameController.CONTROLE_DE_JOGO.moedas >= precoCincoSeg)
-            {
-                cincoSecBt.GetComponent<Button>().enabled = true;
-            }else
-            {
-                cincoSecBt.GetComponent<Button>().enabled = false;
-            }
-        }else if(GameController.CONTROLE_DE_JOGO.tempoRelogio < 7){
-            cincoSecBt.SetActive(false);
-            seteSecBt.SetActive(true);
-            dezSecBt.SetActive(false);
-            if (GameController.CONTROLE_DE_JOGO.moedas >= precoSeteSeg)
-            {
-                seteSecBt.GetComponent<Button>().enabled = true;
-            }else
-            {
-                seteSecBt.GetComponent<Button>().enabled = false;
-            }
-
-        }else if(GameController.CONTROLE_DE_JOGO.tempoRelogio < 10){
-            cincoSecBt.SetActive(false);
-            seteSecBt.SetActive(false);
-            dezSecBt.SetActive(true);
-            if (GameController.CONTROLE_DE_JOGO.moedas >= precoDezSeg)
-            {
-                dezSecBt.GetComponent<Button>().enabled = true;
-            }else
-            {
-                dezSecBt.GetComponent<Button>().enabled = false;
-            }
-        }else
+    public void ComprarRelogio(){
+        if (!GameController.CONTROLE_DE_JOGO.relogio)
         {
-            cincoSecBt.SetActive(false);
-            seteSecBt.SetActive(false);
-            dezSecBt.SetActive(false);
+            if (GameController.CONTROLE_DE_JOGO.moedas >= valorRelogio)
+            {
+                GameController.CONTROLE_DE_JOGO.relogio = true;
+                GameController.CONTROLE_DE_JOGO.moedas -= valorRelogio;
+                GameController.CONTROLE_DE_JOGO.SalvarDados();
+                //AtualisarDinheiro();
+                controleUi.AtualizarMoedas();
+                MensagemItemComprado();
+            }else{
+                MensagemDinheiro();
+            }
+        }else{
+            MensagemItemExistente();
         }
     }
 
-    public void ComprarUpgrade(int indexSec){
-        if(indexSec == 5){
-            GameController.CONTROLE_DE_JOGO.moedas -= precoCincoSeg;
-            GameController.CONTROLE_DE_JOGO.tempoRelogio = 5;
-            GameController.CONTROLE_DE_JOGO.SalvarDados();
-        }else if(indexSec == 7){
-            GameController.CONTROLE_DE_JOGO.moedas -= precoSeteSeg;
-            GameController.CONTROLE_DE_JOGO.tempoRelogio = 7;
-            GameController.CONTROLE_DE_JOGO.SalvarDados();
-        }else if(indexSec == 10){
-            GameController.CONTROLE_DE_JOGO.moedas -= precoDezSeg;
-            GameController.CONTROLE_DE_JOGO.tempoRelogio = 10;
-            GameController.CONTROLE_DE_JOGO.SalvarDados();
+    public void ComprarEscudo(){
+        if (!GameController.CONTROLE_DE_JOGO.shield)
+        {
+            if (GameController.CONTROLE_DE_JOGO.moedas >= valorEscudo)
+            {
+                GameController.CONTROLE_DE_JOGO.shield = true;
+                GameController.CONTROLE_DE_JOGO.moedas -= valorEscudo;
+                GameController.CONTROLE_DE_JOGO.SalvarDados();
+                //AtualisarDinheiro();
+                controleUi.AtualizarMoedas();
+                MensagemItemComprado();
+            }else{
+                MensagemDinheiro();
+            }
+        }else{
+            MensagemItemExistente();
         }
-        controleUi.AtualizarMoedasLoja();
-        VerificarPoderCompraUpgrade();
-        VerificarPoderDeCompraNaruto();
     }
 }
